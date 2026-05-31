@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { TextDecoder } from "util";
 import type { FileMetadata, PreviewData, ColumnType } from "../types/dataset";
 import { inferColumnType } from "./typeInference";
 
@@ -63,9 +64,9 @@ function readFileWithEncoding(filePath: string): { content: string; encoding: st
   }
 
   try {
-    const text = buffer.toString("utf-8");
-    const hasReplacementChar = text.includes("\ufffd");
-    if (!hasReplacementChar) return { content: text, encoding: "utf-8" };
+    const decoder = new TextDecoder("utf-8", { fatal: true });
+    const text = decoder.decode(buffer);
+    return { content: text, encoding: "utf-8" };
   } catch {}
 
   const latin1 = buffer.toString("latin1");

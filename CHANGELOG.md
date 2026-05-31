@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.0.4] - 2026-05-31
+
+### Fixed
+- Fixed UTF-8 encoding detection heuristic to prevent files with literal replacement characters (like `spam.csv`) from being incorrectly identified as Latin-1/ISO-8859-1.
+
+## [1.0.3] - 2026-05-31
+
+### Changed
+- Updated `.gitignore` with comprehensive node, vscode, and webview patterns.
+
+## [1.0.2] - 2026-05-31
+
+### Changed
+- Removed redundant logo from README and resized extension icon to standard 128x128.
+
+## [1.0.1] - 2026-05-31
+
+### Fixed
+- Fixed schema warning by adding icon to recent-files tree view.
+
 ## [1.0.0] - 2026-05-31
 
 ### Added
