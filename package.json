@@ -112,7 +112,8 @@
         {
           "id": "dataprism-recent-files",
           "name": "Recent Files",
-          "type": "tree"
+          "type": "tree",
+          "icon": "$(history)"
         }
       ]
     },
