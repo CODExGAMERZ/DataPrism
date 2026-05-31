@@ -106,6 +106,52 @@ export interface PreviewData {
   rows: Record<string, unknown>[];
 }
 
+export interface FeatureSuggestion {
+  column: string;
+  type: string;
+  title: string;
+  description: string;
+  impact: "High" | "Medium" | "Low";
+}
+
+export interface MissingValueRecommendation {
+  column: string;
+  missingCount: number;
+  percentage: number;
+  recommendation: string;
+  strategy: string;
+  codeSnippet: string;
+}
+
+export interface CompetitionLeakage {
+  column: string;
+  reason: string;
+  severity: "High" | "Medium";
+}
+
+export interface CompetitionModelSuggestion {
+  model: string;
+  suitability: "High" | "Medium" | "Low";
+  reason: string;
+}
+
+export interface CompetitionInsights {
+  targetColumnSuggestion: string;
+  targetLeakageAlerts: CompetitionLeakage[];
+  validationStrategy: string;
+  validationDetails: string;
+  modelSuggestions: CompetitionModelSuggestion[];
+  metricSuggestions: string[];
+}
+
+export interface PlainTextSummary {
+  description: string;
+  assumedTask: string;
+  keyPredictors: string[];
+  qualityIssuesCount: number;
+  mlSuitability: string;
+}
+
 export interface DatasetProfile {
   metadata: FileMetadata;
   preview: PreviewData;
@@ -115,9 +161,15 @@ export interface DatasetProfile {
   correlation: CorrelationMatrix | null;
   outliers: OutlierResult[];
   quality: QualityScore;
+  insights?: {
+    summary: PlainTextSummary;
+    features: FeatureSuggestion[];
+    missing: MissingValueRecommendation[];
+    competition: CompetitionInsights;
+  };
 }
 
-export type TabName = "preview" | "summary" | "correlations" | "quality" | "columns";
+export type TabName = "preview" | "summary" | "correlations" | "quality" | "columns" | "insights";
 
 export type AnalysisStage =
   | "metadata"

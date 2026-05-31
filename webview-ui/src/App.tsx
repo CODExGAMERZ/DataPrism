@@ -11,6 +11,7 @@ import type {
   CorrelationMatrix,
   OutlierResult,
   QualityScore,
+  DatasetProfile,
 } from "./types";
 import TabBar from "./components/TabBar";
 import ProgressBar from "./components/ProgressBar";
@@ -24,6 +25,7 @@ import OutlierSummary from "./components/quality/OutlierSummary";
 import ColumnInsightCard from "./components/columns/ColumnInsightCard";
 import ErrorCard from "./components/ErrorCard";
 import SkeletonCard from "./components/SkeletonCard";
+import InsightsView from "./components/insights/InsightsView";
 
 export default function App() {
   const [tab, setTab] = useState<TabName>("preview");
@@ -39,6 +41,7 @@ export default function App() {
   const [correlation, setCorrelation] = useState<CorrelationMatrix | null | undefined>(undefined);
   const [outliers, setOutliers] = useState<OutlierResult[] | null>(null);
   const [quality, setQuality] = useState<QualityScore | null>(null);
+  const [insights, setInsights] = useState<Required<DatasetProfile>["insights"] | null>(null);
 
   const handleMessage = useCallback((event: MessageEvent<HostMessage>) => {
     const msg = event.data;
@@ -75,6 +78,9 @@ export default function App() {
       case "ANALYSIS_COMPLETE":
         setComplete(true);
         setProgress(100);
+        if (msg.payload.insights) {
+          setInsights(msg.payload.insights);
+        }
         break;
       case "ANALYSIS_ERROR":
         setError(msg.payload);
@@ -100,6 +106,7 @@ export default function App() {
     setCorrelation(undefined);
     setOutliers(null);
     setQuality(null);
+    setInsights(null);
     postMessage({ type: "RE_ANALYZE" });
   };
 
@@ -148,6 +155,12 @@ export default function App() {
             )}
             {columns ? <StatsTable columns={columns} /> : <SkeletonCard count={2} />}
             {missing ? <MissingValuesChart missing={missing} /> : <SkeletonCard count={1} />}
+          </div>
+        )}
+
+        {tab === "insights" && (
+          <div className="fade-in">
+            <InsightsView insights={insights} />
           </div>
         )}
 

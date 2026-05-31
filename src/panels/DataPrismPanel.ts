@@ -4,6 +4,7 @@ import type { HostMessage, WebviewMessage } from "../types/messages";
 import type { DatasetProfile } from "../types/dataset";
 import { analyzeFile } from "../analysis/analyzer";
 import { generateHtmlReport } from "../report/htmlReport";
+import { generateMarkdownReport } from "../report/markdownReport";
 import { RecentFilesProvider } from "../sidebar/RecentFilesProvider";
 
 export class DataPrismPanel {
@@ -170,7 +171,7 @@ export class DataPrismPanel {
 
     if (!uri) return;
 
-    const content = generateHtmlReport(this.currentProfile);
+    const content = format === "html" ? generateHtmlReport(this.currentProfile) : generateMarkdownReport(this.currentProfile);
     await vscode.workspace.fs.writeFile(uri, Buffer.from(content, "utf8"));
     vscode.window.showInformationMessage(`DataPrism: Report saved to ${uri.fsPath}`);
   }

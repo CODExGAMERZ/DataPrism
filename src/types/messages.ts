@@ -10,7 +10,7 @@ import type {
   DuplicateSummary,
 } from "./dataset";
 
-export type TabName = "preview" | "summary" | "correlations" | "quality" | "columns";
+export type TabName = "preview" | "summary" | "correlations" | "quality" | "columns" | "insights";
 
 export type AnalysisStage =
   | "metadata"

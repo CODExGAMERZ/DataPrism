@@ -9,6 +9,7 @@ import { analyzeDuplicates } from "./duplicates";
 import { computeCorrelation } from "./correlation";
 import { detectOutliers } from "./outliers";
 import { computeQualityScore } from "./qualityScore";
+import { generateInsights } from "./insightsEngine";
 
 export interface AnalysisCallbacks {
   onProgress: (stage: AnalysisStage, percent: number) => void;
@@ -125,7 +126,7 @@ export async function analyzeFile(filePath: string, callbacks: AnalysisCallbacks
   callbacks.onQuality(quality);
   callbacks.onProgress("complete", 100);
 
-  const profile: DatasetProfile = {
+  const baseProfile = {
     metadata,
     preview,
     columns,
@@ -134,6 +135,12 @@ export async function analyzeFile(filePath: string, callbacks: AnalysisCallbacks
     correlation,
     outliers,
     quality,
+  };
+
+  const insights = generateInsights(baseProfile);
+  const profile: DatasetProfile = {
+    ...baseProfile,
+    insights,
   };
 
   callbacks.onComplete(profile);

@@ -4,7 +4,7 @@
   <a href="https://marketplace.visualstudio.com/items?itemName=CODExGAMERZ.dataprism">
     <img src="https://img.shields.io/badge/Publisher-CODExGAMERZ-blueviolet?style=for-the-badge" alt="Publisher" />
   </a>
-  <img src="https://img.shields.io/badge/Version-1.0.3-7c5cfc?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-1.1.0-7c5cfc?style=for-the-badge" alt="Version" />
   <img src="https://img.shields.io/badge/Environment-100%25%20Offline-success?style=for-the-badge" alt="Offline" />
   <img src="https://img.shields.io/badge/License-MIT-44dd88?style=for-the-badge" alt="License" />
 </p>
@@ -34,17 +34,23 @@ The extension loads a tabbed panel interface built using VS Code theme-compliant
 * **Categorical Distribution**: Displays category counts, unique value counts, the most frequent value, and its percentage.
 * **Temporal Tracking**: Outlines start/end dates, day range, and missing timestamps.
 
-### 3. 🧮 Correlations Tab
+### 3. 💡 Insights Tab
+* **Executive Summary**: A dynamic, heuristic-driven natural language summary of the dataset layout, inferred task category, and general health details.
+* **Feature Suggestions**: Recommended actions for log transformations on skewed data, feature scaling, dropping index columns, and resolving highly correlated feature pairs.
+* **Missing Value Imputations**: Imputation recipes (mean, median, mode, constant) accompanied by copyable Pandas code snippets.
+* **Competition Guidelines**: Identifies potential target variables, alerts on target leakage variables, suggests CV validation splits (temporal vs stratified), and details model suggestions.
+
+### 4. 🧮 Correlations Tab
 * **Pearson & Spearman Matrices**: Evaluates relationships between numerical fields.
 * **Interactive Heatmap**: Custom canvas component that renders a correlation matrix with tooltips and responsive cell highlighting.
 * **Performance Safeguards**: Auto-detects matrices exceeding 50 columns and warns the user to prevent performance lag.
 
-### 4. 🛡️ Quality Tab
+### 5. 🛡️ Quality Tab
 * **0–100 Data Health Score**: A composite metric computed from the dataset's overall cleanliness.
 * **Outlier Profiler**: Displays columns with high outlier counts using the Interquartile Range (IQR) method and previews the top 5 most extreme values with their row indexes.
 * **Deduction Audit Log**: Itemized list showing precisely why points were deducted, guiding data cleaning tasks.
 
-### 5. 💡 Column Insights Tab
+### 6. 📐 Columns Tab
 * Aggregates statistics, warnings, and distribution charts into dedicated column profile cards.
 * Generates actionable suggestions based on statistical anomalies (e.g., log transformation recommendations, cardinality warnings).
 

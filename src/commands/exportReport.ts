@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { DataPrismPanel } from "../panels/DataPrismPanel";
 import { generateHtmlReport } from "../report/htmlReport";
+import { generateMarkdownReport } from "../report/markdownReport";
 import * as path from "path";
 
 export function registerExportCommand(): vscode.Disposable {
@@ -30,7 +31,7 @@ export function registerExportCommand(): vscode.Disposable {
 
     if (!uri) return;
 
-    const content = generateHtmlReport(profile);
+    const content = format === "html" ? generateHtmlReport(profile) : generateMarkdownReport(profile);
     await vscode.workspace.fs.writeFile(uri, Buffer.from(content, "utf8"));
     vscode.window.showInformationMessage(`DataPrism: Report saved to ${uri.fsPath}`);
   });

@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0] - 2026-05-31
+
+### Added
+- New **Insights** tab in the interactive panel providing executive dataset explanations, feature engineering recommendations, copyable Pandas code templates for missing value imputation, and ML competition strategies.
+- Completed full implementation of the Markdown (`.md`) export report.
+- Conditioned both HTML and Markdown report exporters to write to file depending on the selected user configuration.
+- Enriched exported HTML reports with the newly introduced insights and strategy cards.
+
 ## [1.0.4] - 2026-05-31
 
 ### Fixed
