@@ -1,0 +1,15 @@
+.vscode/**
+src/**
+webview-ui/src/**
+webview-ui/node_modules/**
+webview-ui/tsconfig.json
+webview-ui/vite.config.ts
+webview-ui/package.json
+test/**
+node_modules/**
+.gitignore
+tsconfig.json
+esbuild.js
+*.map
+.vscode-test/**
+dataset_explorer_vscode_spec.md

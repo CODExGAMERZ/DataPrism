@@ -1,0 +1,12 @@
+[
+  {"name": "Alice", "age": 30, "city": "Seattle", "score": 85.5},
+  {"name": "Bob", "age": 25, "city": "Portland", "score": 90.2},
+  {"name": "Charlie", "age": 35, "city": "San Francisco", "score": 72.8},
+  {"name": "Diana", "age": 28, "city": "Denver", "score": 95.1},
+  {"name": "Eve", "age": 32, "city": "Austin", "score": 88.4},
+  {"name": "Frank", "age": 45, "city": "Chicago", "score": 76.9},
+  {"name": "Grace", "age": 27, "city": "Boston", "score": 91.3},
+  {"name": "Hank", "age": 40, "city": "Miami", "score": 83.7},
+  {"name": "Ivy", "age": 33, "city": "Atlanta", "score": 87.6},
+  {"name": "Jack", "age": 29, "city": "Dallas", "score": 79.0}
+]

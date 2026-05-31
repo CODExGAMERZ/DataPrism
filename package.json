@@ -1,0 +1,167 @@
+{
+  "name": "dataprism",
+  "displayName": "DataPrism",
+  "description": "Instant dataset exploration, profiling, and quality analysis for CSV and JSON files — fully offline, right inside VS Code.",
+  "version": "1.0.1",
+  "publisher": "CODExGAMERZ",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Data Science",
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "dataset",
+    "csv",
+    "json",
+    "data analysis",
+    "EDA",
+    "data quality",
+    "profiling",
+    "statistics",
+    "correlation",
+    "outlier"
+  ],
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#1a1a2e",
+    "theme": "dark"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CODExGAMERZ/DataPrism"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "dataprism.openFile",
+        "title": "Open with DataPrism",
+        "category": "DataPrism",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "dataprism.reAnalyze",
+        "title": "Re-analyze",
+        "category": "DataPrism",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "dataprism.exportReport",
+        "title": "Export Report",
+        "category": "DataPrism",
+        "icon": "$(export)"
+      },
+      {
+        "command": "dataprism.focusPreview",
+        "title": "Focus Preview Tab",
+        "category": "DataPrism"
+      },
+      {
+        "command": "dataprism.focusSummary",
+        "title": "Focus Summary Tab",
+        "category": "DataPrism"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "dataprism.openFile",
+          "when": "resourceExtname =~ /\\.(csv|json)$/i",
+          "group": "navigation@10"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "dataprism.openFile",
+          "when": "resourceExtname =~ /\\.(csv|json)$/i",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "dataprism.openFile",
+          "when": "view == dataprism-recent-files",
+          "group": "inline"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "dataprism.reAnalyze",
+        "key": "ctrl+shift+l",
+        "mac": "cmd+shift+l",
+        "when": "dataprism.panelActive"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "dataprism-sidebar",
+          "title": "DataPrism",
+          "icon": "$(graph)"
+        }
+      ]
+    },
+    "views": {
+      "dataprism-sidebar": [
+        {
+          "id": "dataprism-recent-files",
+          "name": "Recent Files",
+          "type": "tree"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "DataPrism",
+      "properties": {
+        "dataprism.sampleSizeRows": {
+          "type": "number",
+          "default": 100000,
+          "description": "Number of rows to sample for files exceeding the large-file threshold."
+        },
+        "dataprism.largeFileThresholdMB": {
+          "type": "number",
+          "default": 50,
+          "description": "Files larger than this value (in MB) will be sampled rather than fully loaded."
+        },
+        "dataprism.defaultExportFormat": {
+          "type": "string",
+          "enum": ["html", "markdown"],
+          "default": "html",
+          "description": "Default format for exported EDA reports."
+        },
+        "dataprism.exportPath": {
+          "type": "string",
+          "default": "",
+          "description": "Default directory for exported reports. If empty, uses the directory of the analyzed file."
+        },
+        "dataprism.correlationMethod": {
+          "type": "string",
+          "enum": ["pearson", "spearman"],
+          "default": "pearson",
+          "description": "Correlation method used for the heatmap."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "package": "node esbuild.js --production",
+    "build:webview": "cd webview-ui && npm install && npm run build",
+    "compile:all": "npm run compile && npm run build:webview",
+    "lint": "eslint src --ext ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.0"
+  }
+}

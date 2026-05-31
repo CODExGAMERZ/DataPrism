@@ -1,0 +1,9 @@
+node_modules/
+dist/
+out/
+*.vsix
+.vscode-test/
+.env
+webview-ui/node_modules/
+webview-ui/dist/
+*.js.map

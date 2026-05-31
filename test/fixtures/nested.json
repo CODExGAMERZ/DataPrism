@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "user": {
+      "name": "Alice",
+      "age": 30,
+      "address": {
+        "city": "Seattle",
+        "state": "WA"
+      }
+    },
+    "scores": [85, 92, 78],
+    "active": true
+  },
+  {
+    "id": 2,
+    "user": {
+      "name": "Bob",
+      "age": 25,
+      "address": {
+        "city": "Portland",
+        "state": "OR"
+      }
+    },
+    "scores": [90, 88, 95],
+    "active": false
+  },
+  {
+    "id": 3,
+    "user": {
+      "name": "Charlie",
+      "age": 35,
+      "address": {
+        "city": "San Francisco",
+        "state": "CA"
+      }
+    },
+    "scores": [72, 68, 80],
+    "active": true
+  },
+  {
+    "id": 4,
+    "user": {
+      "name": "Diana",
+      "age": 28,
+      "address": {
+        "city": "Denver",
+        "state": "CO"
+      }
+    },
+    "scores": [95, 97, 91],
+    "active": true
+  },
+  {
+    "id": 5,
+    "user": {
+      "name": "Eve",
+      "age": 32,
+      "address": {
+        "city": "Austin",
+        "state": "TX"
+      }
+    },
+    "scores": [88, 82, 86],
+    "active": false
+  }
+]
