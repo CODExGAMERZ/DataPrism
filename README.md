@@ -1,18 +1,10 @@
-<p align="center">
-  <img src="media/icon.png" width="128" height="128" alt="DataPrism Logo" />
-</p>
-
-<h1 align="center">DataPrism</h1>
-
-<p align="center">
-  <strong>Instant dataset exploration, profiling, and quality analysis for CSV and JSON files — 100% offline, right inside VS Code.</strong>
-</p>
+# DataPrism
 
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=CODExGAMERZ.dataprism">
     <img src="https://img.shields.io/badge/Publisher-CODExGAMERZ-blueviolet?style=for-the-badge" alt="Publisher" />
   </a>
-  <img src="https://img.shields.io/badge/Version-1.0.2-7c5cfc?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-1.0.3-7c5cfc?style=for-the-badge" alt="Version" />
   <img src="https://img.shields.io/badge/Environment-100%25%20Offline-success?style=for-the-badge" alt="Offline" />
   <img src="https://img.shields.io/badge/License-MIT-44dd88?style=for-the-badge" alt="License" />
 </p>

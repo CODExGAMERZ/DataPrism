@@ -2,7 +2,7 @@
   "name": "dataprism",
   "displayName": "DataPrism",
   "description": "Instant dataset exploration, profiling, and quality analysis for CSV and JSON files — fully offline, right inside VS Code.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "CODExGAMERZ",
   "license": "MIT",
   "engines": {
