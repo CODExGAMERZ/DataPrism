@@ -12,7 +12,7 @@
   <a href="https://marketplace.visualstudio.com/items?itemName=CODExGAMERZ.dataprism">
     <img src="https://img.shields.io/badge/Publisher-CODExGAMERZ-blueviolet?style=for-the-badge" alt="Publisher" />
   </a>
-  <img src="https://img.shields.io/badge/Version-1.0.1-7c5cfc?style=for-the-badge" alt="Version" />
+  <img src="https://img.shields.io/badge/Version-1.0.2-7c5cfc?style=for-the-badge" alt="Version" />
   <img src="https://img.shields.io/badge/Environment-100%25%20Offline-success?style=for-the-badge" alt="Offline" />
   <img src="https://img.shields.io/badge/License-MIT-44dd88?style=for-the-badge" alt="License" />
 </p>
