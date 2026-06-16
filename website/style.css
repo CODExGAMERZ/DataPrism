@@ -151,6 +151,13 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+.logo-img {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
 .nav-links {
   display: flex;
   gap: 2rem;
