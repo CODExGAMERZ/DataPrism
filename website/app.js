@@ -6,12 +6,11 @@
 (function () {
   // DOM Elements
   const navbar = document.getElementById('navbar');
-  const uploadContainer = document.getElementById('sim-upload-container');
   const loadingContainer = document.getElementById('sim-loading-container');
   const dashboardContainer = document.getElementById('sim-dashboard-container');
   
   const fileInput = document.getElementById('sim-file-input');
-  const btnLoadSample = document.getElementById('btn-load-sample');
+  const btnSidebarUpload = document.getElementById('btn-sidebar-upload');
   const btnReanalyze = document.getElementById('sim-btn-reanalyze');
   const btnExport = document.getElementById('sim-btn-export');
   
@@ -26,13 +25,30 @@
   const tabButtons = document.querySelectorAll('.tab-btn');
   const tabPanes = document.querySelectorAll('.tab-pane');
 
+  // Custom Split Workspace DOM elements
+  const fileTree = document.getElementById('file-tree');
+  const editorTabTitle = document.getElementById('editor-tab-title');
+  const editorFileSize = document.getElementById('editor-file-size');
+  const editorLineNumbers = document.getElementById('editor-line-numbers');
+  const editorCodePre = document.getElementById('editor-code-pre');
+  const consoleLogPre = document.getElementById('console-log-pre');
+  const consolePanel = document.querySelector('.console-panel');
+  const btnToggleConsole = document.getElementById('btn-toggle-console');
+  const paneDivider = document.getElementById('prism-pane-divider');
+  const editorPane = document.querySelector('.editor-pane');
+  const visualizerPane = document.querySelector('.visualizer-pane');
+  const splitWorkspace = document.querySelector('.split-workspace');
+
   // State
   let currentFile = { name: '', size: 0, content: '' };
   let analysisResult = null;
   let activeTab = 'preview';
 
-  // Sample Dataset
-  const SAMPLE_CSV = `Name,Age,Salary,Department,JoinedDate,IsRemote
+  // Sample Datasets Database
+  const DATASETS = {
+    'employees.csv': {
+      size: 614,
+      content: `Name,Age,Salary,Department,JoinedDate,IsRemote
 Alice Smith,28,75000,Engineering,2021-03-15,true
 Bob Jones,34,92000,Sales,2019-10-01,false
 Charlie Brown,45,120000,Engineering,2015-06-20,true
@@ -42,9 +58,39 @@ Fiona Gallagher,,62000,Sales,2023-08-01,true
 George Clark,50,,Engineering,2012-11-30,false
 Hannah Abbott,26,58000,Marketing,2023-04-15,true
 Ian Malcolm,42,115000,Research,2016-09-05,false
-Julia Roberts,31,95000,Operations,,true`;
+Julia Roberts,31,95000,Operations,,true`
+    },
+    'california_housing.csv': {
+      size: 928,
+      content: `longitude,latitude,housing_median_age,total_rooms,total_bedrooms,population,households,median_income,median_house_value
+-122.23,37.88,41.0,880.0,129.0,322.0,126.0,8.3252,452600.0
+-122.22,37.86,21.0,7099.0,1106.0,2401.0,1138.0,8.3014,358500.0
+-122.24,37.85,52.0,1467.0,190.0,496.0,177.0,7.2574,352100.0
+-122.25,37.85,52.0,1274.0,235.0,558.0,219.0,5.6431,341300.0
+-122.25,37.85,52.0,1627.0,280.0,565.0,259.0,3.8462,342200.0
+-122.25,37.85,52.0,919.0,213.0,413.0,193.0,4.0368,269700.0
+-122.25,37.84,52.0,2535.0,489.0,1094.0,514.0,3.6591,299200.0
+-122.25,37.84,52.0,3104.0,687.0,1157.0,647.0,3.1200,241400.0
+-122.26,37.84,42.0,2555.0,665.0,1206.0,595.0,2.0804,226700.0
+-122.25,37.84,52.0,3549.0,707.0,1551.0,714.0,3.6912,261100.0`
+    },
+    'wine_quality.csv': {
+      size: 965,
+      content: `fixed_acidity,volatile_acidity,citric_acid,residual_sugar,chlorides,free_sulfur_dioxide,total_sulfur_dioxide,density,pH,sulphates,alcohol,quality
+7.4,0.7,0.0,1.9,0.076,11.0,34.0,0.9978,3.51,0.56,9.4,5
+7.8,0.88,0.0,2.6,0.098,25.0,67.0,0.9968,3.2,0.68,9.8,5
+7.8,0.76,0.04,2.3,0.092,15.0,54.0,0.997,3.26,0.65,9.8,5
+11.2,0.28,0.56,1.9,0.075,17.0,60.0,0.998,3.16,0.58,9.8,6
+7.4,0.7,0.0,1.9,0.076,11.0,34.0,0.9978,3.51,0.56,9.4,5
+7.4,0.66,0.0,1.8,0.075,13.0,40.0,0.9978,3.51,0.56,9.4,5
+7.9,0.6,0.06,1.6,0.069,15.0,59.0,0.9964,3.3,0.46,9.4,5
+7.3,0.65,0.0,1.2,0.065,15.0,21.0,0.9946,3.39,0.47,10.0,7
+7.8,0.58,0.02,2.0,0.073,9.0,18.0,0.9968,3.36,0.57,9.5,7
+7.5,0.5,0.36,6.1,0.071,17.0,102.0,0.9978,3.35,0.8,10.5,5`
+    }
+  };
 
-  // Init
+  // Init Navbar Background Scrolling
   window.addEventListener('scroll', () => {
     if (window.scrollY > 50) {
       navbar.style.background = 'rgba(9, 9, 11, 0.9)';
@@ -65,7 +111,6 @@ Julia Roberts,31,95000,Operations,,true`;
       navLinks.classList.toggle('open');
     });
 
-    // Close menu when clicking a link
     navLinks.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => {
         navHamburger.classList.remove('active');
@@ -73,6 +118,43 @@ Julia Roberts,31,95000,Operations,,true`;
       });
     });
   }
+
+  // Console Collapse Logic
+  btnToggleConsole.addEventListener('click', () => {
+    const isCollapsed = consolePanel.classList.toggle('collapsed');
+    btnToggleConsole.textContent = isCollapsed ? 'Expand' : 'Collapse';
+  });
+
+  // Resizable Divider Logic
+  let isResizing = false;
+  paneDivider.addEventListener('mousedown', (e) => {
+    isResizing = true;
+    document.body.style.cursor = 'col-resize';
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isResizing) return;
+    const rect = splitWorkspace.getBoundingClientRect();
+    const offsetLeft = e.clientX - rect.left;
+    const widthPercentage = (offsetLeft / rect.width) * 100;
+    
+    if (widthPercentage > 15 && widthPercentage < 80) {
+      editorPane.style.flex = widthPercentage / 10;
+      visualizerPane.style.flex = (100 - widthPercentage) / 10;
+    }
+  });
+
+  window.addEventListener('mouseup', () => {
+    if (isResizing) {
+      isResizing = false;
+      document.body.style.cursor = '';
+      if (analysisResult) {
+        // Redraw correlations heatmap on resize release
+        renderCorrelationHeatmap(analysisResult.correlation);
+      }
+    }
+  });
 
   // Tab Switching
   tabButtons.forEach(btn => {
@@ -94,87 +176,132 @@ Julia Roberts,31,95000,Operations,,true`;
     if (activePane) activePane.classList.add('active');
 
     if (tabName === 'correlations' && analysisResult) {
-      // Re-draw SVG correlations matrix to fit the dimensions
       setTimeout(() => renderCorrelationHeatmap(analysisResult.correlation), 50);
     }
   }
 
-  // Upload Handlers
+  // Sidebar Custom Uploader Bindings
+  btnSidebarUpload.addEventListener('click', () => {
+    fileInput.click();
+  });
+
   fileInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if (file) {
-      currentFile.name = file.name;
-      currentFile.size = file.size;
+      // Append temporary list element to file tree
+      const existingCustom = fileTree.querySelector('.file-item[data-custom="true"]');
+      if (existingCustom) existingCustom.remove();
+
+      const newLi = document.createElement('li');
+      newLi.className = 'file-item active';
+      newLi.setAttribute('data-file', file.name);
+      newLi.setAttribute('data-custom', 'true');
+      newLi.innerHTML = `<i class="fa-solid fa-file-excel text-indigo"></i> <span>${file.name}</span>`;
+      
+      // Remove active state from other items
+      fileTree.querySelectorAll('.file-item').forEach(li => li.classList.remove('active'));
+      fileTree.appendChild(newLi);
+
+      // Re-bind click for the newly created element
+      newLi.addEventListener('click', () => {
+        selectFile(file.name, file.size, text);
+      });
+
       const text = await file.text();
-      currentFile.content = text;
-      runAnalysis();
+      selectFile(file.name, file.size, text);
     }
   });
 
-  btnLoadSample.addEventListener('click', () => {
-    currentFile.name = 'employees_sample.csv';
-    currentFile.size = SAMPLE_CSV.length;
-    currentFile.content = SAMPLE_CSV;
-    runAnalysis();
+  // Click handler for default file explorer items
+  fileTree.querySelectorAll('.file-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const fileName = item.getAttribute('data-file');
+      if (DATASETS[fileName]) {
+        fileTree.querySelectorAll('.file-item').forEach(li => li.classList.remove('active'));
+        item.classList.add('active');
+        selectFile(fileName, DATASETS[fileName].size, DATASETS[fileName].content);
+      }
+    });
   });
 
+  // Re-run diagnostic button
   btnReanalyze.addEventListener('click', () => {
-    resetDashboard();
+    if (currentFile.name) {
+      runAnalysis();
+    }
   });
 
   btnExport.addEventListener('click', () => {
     exportHtmlReport();
   });
 
-  // Drag and Drop
-  uploadContainer.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    uploadContainer.style.borderColor = 'var(--accent-primary)';
-  });
+  // Set file details in mock code editor
+  function selectFile(name, size, content) {
+    currentFile.name = name;
+    currentFile.size = size;
+    currentFile.content = content;
 
-  uploadContainer.addEventListener('dragleave', () => {
-    uploadContainer.style.borderColor = 'rgba(129, 140, 248, 0.4)';
-  });
+    // Update editor header metadata
+    editorTabTitle.innerHTML = `<i class="fa-solid fa-file-code text-indigo"></i> Source: ${name}`;
+    fileTitleText.textContent = name;
+    
+    // Format file size
+    const kb = (size / 1024).toFixed(2);
+    editorFileSize.textContent = `~${kb} KB`;
 
-  uploadContainer.addEventListener('drop', async (e) => {
-    e.preventDefault();
-    uploadContainer.style.borderColor = 'rgba(129, 140, 248, 0.4)';
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      currentFile.name = file.name;
-      currentFile.size = file.size;
-      const text = await file.text();
-      currentFile.content = text;
-      runAnalysis();
+    // Render raw code in Monaco mockup
+    editorCodePre.textContent = content;
+
+    // Update Line Numbers
+    const lines = content.split('\n');
+    let numbersHtml = '';
+    for (let i = 1; i <= lines.length; i++) {
+      numbersHtml += `<div>${i}</div>`;
     }
-  });
+    editorLineNumbers.innerHTML = numbersHtml;
 
-  function resetDashboard() {
-    uploadContainer.classList.add('active');
-    loadingContainer.classList.remove('active');
-    dashboardContainer.classList.remove('active');
-    btnExport.disabled = true;
-    fileTitleText.textContent = 'DataPrism Panel';
-    footerStatusDetails.textContent = 'DataPrism Offline Sandbox';
-    footerStatusScore.textContent = '';
-    analysisResult = null;
+    runAnalysis();
+  }
+
+  // Console terminal log utilities
+  function clearConsole() {
+    consoleLogPre.textContent = '';
+  }
+
+  function printConsole(logType, message) {
+    const timestamp = new Date().toLocaleTimeString();
+    let prefix = `[${timestamp}] [INFO]`;
+    if (logType === 'debug') prefix = `[${timestamp}] [DEBUG]`;
+    if (logType === 'warn') prefix = `[${timestamp}] [WARNING]`;
+    if (logType === 'success') prefix = `[${timestamp}] [SUCCESS]`;
+    if (logType === 'error') prefix = `[${timestamp}] [ERROR]`;
+
+    consoleLogPre.textContent += `${prefix} ${message}\n`;
+    consoleLogPre.scrollTop = consoleLogPre.scrollHeight;
   }
 
   // Analytics Engine
   async function runAnalysis() {
-    uploadContainer.classList.remove('active');
-    loadingContainer.classList.add('active');
-    
+    loadingContainer.classList.remove('hidden');
+    dashboardContainer.classList.add('hidden');
+    btnExport.disabled = true;
+    clearConsole();
+
+    printConsole('info', `Initializing DataPrism offline profiling engine v1.1.0`);
+    printConsole('info', `Target file stream: ${currentFile.name}`);
+
     try {
       updateProgress('metadata', 5, 'Reading file structure...');
       await sleep(150);
 
       const ext = currentFile.name.split('.').pop().toLowerCase();
       if (ext !== 'csv' && ext !== 'json') {
+        printConsole('error', `Unsupported file format: .${ext}. Only CSV/JSON are allowed client-side.`);
         throw new Error('Unsupported file extension. Only .csv and .json files are supported.');
       }
 
       // 1. Parsing
+      printConsole('info', `Parsing dataset buffer content...`);
       updateProgress('preview', 15, 'Parsing cell values...');
       await sleep(150);
       let parsedData;
@@ -185,39 +312,62 @@ Julia Roberts,31,95000,Operations,,true`;
       }
 
       if (parsedData.rows.length === 0) {
+        printConsole('error', `Empty dataset loaded.`);
         throw new Error('This file contains no records.');
       }
+
+      printConsole('success', `Parsed ${parsedData.rows.length} rows and ${parsedData.headers.length} headers successfully.`);
 
       // 2. Metadata & Preview
       const metadata = buildMetadata(currentFile.name, currentFile.size, parsedData);
       const preview = buildPreview(parsedData);
       
       // 3. Column Profiling
+      printConsole('debug', `Profiling column datatypes and descriptive statistics...`);
       updateProgress('columns', 30, 'Profiling column formats...');
       await sleep(200);
       const columns = profileColumns(parsedData.headers, parsedData.rows);
+      columns.forEach(c => {
+        printConsole('debug', `Feature '${c.info.name}' resolved as type: [${c.info.type.toUpperCase()}]`);
+      });
 
       // 4. Missing Values
+      printConsole('debug', `Analyzing cell sparsity and null bounds...`);
       updateProgress('missing', 50, 'Analyzing missing cells...');
       await sleep(150);
       const missing = analyzeMissingValues(parsedData.headers, parsedData.rows);
+      if (missing.totalMissing > 0) {
+        printConsole('warn', `Found ${missing.totalMissing} missing values (${missing.overallPercentage}% sparsity).`);
+      } else {
+        printConsole('success', `Dataset is 100% complete. No missing cells detected.`);
+      }
 
       // 5. Duplicates
+      printConsole('debug', `Auditing duplicate row indexes...`);
       updateProgress('duplicates', 65, 'Detecting duplicate rows...');
       await sleep(150);
       const duplicates = analyzeDuplicates(parsedData.rows);
+      if (duplicates.totalDuplicates > 0) {
+        printConsole('warn', `Found ${duplicates.totalDuplicates} duplicate records (${duplicates.duplicatePercentage}% redundancy).`);
+      }
 
       // 6. Correlations
+      printConsole('debug', `Calculating Pearson correlation coefficients...`);
       updateProgress('correlation', 80, 'Computing correlations...');
       await sleep(200);
       const correlation = computeCorrelation(parsedData.headers, parsedData.rows);
 
       // 7. Outliers
+      printConsole('debug', `Evaluating outliers using Tukey's IQR fences...`);
       updateProgress('outliers', 90, 'Filtering outliers...');
       await sleep(150);
       const outliers = detectOutliers(parsedData.headers, parsedData.rows);
+      outliers.forEach(o => {
+        printConsole('warn', `Column '${o.column}': found ${o.outlierCount} outliers (${o.outlierPercentage}%)`);
+      });
 
       // 8. Quality Score & Insights
+      printConsole('info', `Running dataset cleanliness and ML readiness grading...`);
       updateProgress('quality', 95, 'Rating dataset health...');
       await sleep(100);
       const quality = computeQualityScore(missing, duplicates, outliers, columns, parsedData.rows);
@@ -240,13 +390,15 @@ Julia Roberts,31,95000,Operations,,true`;
       await sleep(100);
 
       // Show Dashboard
-      loadingContainer.classList.remove('active');
+      loadingContainer.classList.add('hidden');
       dashboardContainer.classList.add('active');
       btnExport.disabled = false;
       
       fileTitleText.textContent = metadata.fileName;
       footerStatusDetails.textContent = `${metadata.fileName} · ${metadata.rows.toLocaleString()} rows × ${metadata.cols} cols`;
       footerStatusScore.textContent = `Quality Score: ${quality.score}/100`;
+
+      printConsole('success', `Diagnostic analysis complete. Health score: ${quality.score}/100.`);
 
       // Render tab views
       populatePreviewTab(preview, metadata);
@@ -259,8 +411,8 @@ Julia Roberts,31,95000,Operations,,true`;
       switchTab('preview');
       
     } catch (err) {
-      loadingContainer.classList.remove('active');
-      uploadContainer.classList.add('active');
+      loadingContainer.classList.add('hidden');
+      printConsole('error', `Diagnostic run crashed: ${err.message}`);
       alert('Analysis Error: ' + err.message);
     }
   }
@@ -268,6 +420,7 @@ Julia Roberts,31,95000,Operations,,true`;
   function updateProgress(stage, percent, details) {
     progressBarFill.style.width = percent + '%';
     loadingStage.textContent = `Stage: ${stage.toUpperCase()}`;
+
     loadingDetails.textContent = details;
   }
 
@@ -450,7 +603,7 @@ Julia Roberts,31,95000,Operations,,true`;
       else if (typeof v === 'boolean') booleanCount++;
       else if (typeof v === 'string') {
         if (!isNaN(Date.parse(v)) && v.length >= 8 && /[\/\-]/.test(v)) dateCount++;
-        else booleanCount++;
+        else stringCount++;
       } else {
         stringCount++;
       }
@@ -500,7 +653,7 @@ Julia Roberts,31,95000,Operations,,true`;
           q75: getPercentile(nums, 75),
           skewness: getSkewness(nums, mean, stdDev)
         };
-      } else if (type === 'categorical' && nonNulls.length > 0) {
+      } else if ((type === 'categorical' || type === 'boolean') && nonNulls.length > 0) {
         const freqMap = {};
         nonNulls.forEach(v => freqMap[v] = (freqMap[v] || 0) + 1);
         const sorted = Object.entries(freqMap).sort((a, b) => b[1] - a[1]);
@@ -992,6 +1145,20 @@ Julia Roberts,31,95000,Operations,,true`;
         recipes.appendChild(div);
       });
     }
+
+    // Auto-render KaTeX formulas in insights panel
+    const insightsTab = document.getElementById('tab-insights');
+    if (window.renderMathInElement && insightsTab) {
+      window.renderMathInElement(insightsTab, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\[', display: true}
+        ],
+        throwOnError: false
+      });
+    }
   }
 
   // Render heatmaps via raw SVG (VoltC style)
@@ -1313,5 +1480,8 @@ Julia Roberts,31,95000,Operations,,true`;
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  // Load default dataset on initialize
+  selectFile('employees.csv', DATASETS['employees.csv'].size, DATASETS['employees.csv'].content);
 
 })();
