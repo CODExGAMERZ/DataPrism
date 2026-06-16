@@ -1,12 +1,397 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DataPrism</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DataPrism 📊 Instant Local Dataset Profiling & EDA in VS Code</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="DataPrism is a local-first, zero-config dataset exploration and quality profiling tool. Analyze CSV/JSON files client-side instantly.">
+  <meta name="keywords" content="Data Science, EDA, VS Code Extension, Dataset Profiler, CSV Viewer, Local-first Data Analysis">
+  <meta name="author" content="CODExGAMERZ">
+  
+  <!-- Fonts & Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
+
+  <!-- Background Decorative Grid -->
+  <div class="grid-overlay" id="gridOverlay"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar" id="navbar">
+    <div class="container navbar-container">
+      <a href="#" class="logo">
+        <span class="logo-icon">📊</span>
+        DataPrism
+      </a>
+      <div class="nav-links">
+        <a href="#simulator" class="active">Live Simulator</a>
+        <a href="#features">Features</a>
+        <a href="#math">Math Engine</a>
+        <a href="#install">Install</a>
+      </div>
+      <div class="nav-actions">
+        <a href="#install" class="btn-nav-download">Get Extension</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero section-padding">
+    <div class="container">
+      <div class="hero-badge-container">
+        <span class="badge badge-indigo badge-glow"><i class="fa-solid fa-shield"></i> 100% Offline & Secure</span>
+        <span class="badge badge-indigo"><i class="fa-solid fa-bolt"></i> VS Code Native</span>
+      </div>
+      <h1>Instant Dataset Profiling.<br><span class="text-gradient">Zero Python Scripts Required.</span></h1>
+      <p>DataPrism is a local-first Exploratory Data Analysis (EDA) tool. Drop in any CSV or JSON file and immediately audit data quality, outliers, missing fields, and correlation matrices right in your browser or inside VS Code.</p>
+      
+      <div class="hero-ctas">
+        <a href="#simulator" class="btn-primary"><i class="fa-solid fa-play"></i> Launch Web Simulator</a>
+        <a href="#install" class="btn-secondary"><i class="fa-solid fa-download"></i> View on Marketplace</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive IDE Simulator Section -->
+  <section id="simulator" class="simulator-showcase">
+    <div class="container">
+      <div class="section-title">Experience DataPrism Live</div>
+      <p class="section-subtitle">Drop a CSV or JSON file in the mockup below to run our full analysis engine entirely client-side. No data is ever uploaded to any server.</p>
+      
+      <!-- VS Code Extension Mockup Frame -->
+      <div class="vscode-frame" id="prismSimulator">
+        
+        <!-- VS Code Header/Tab Bar -->
+        <header class="vscode-header">
+          <div class="window-controls">
+            <span class="control-dot close"></span>
+            <span class="control-dot minimize"></span>
+            <span class="control-dot maximize"></span>
+          </div>
+          <div class="tab-title">
+            <i class="fa-solid fa-file-csv icon-csv"></i>
+            <span id="simulator-file-title">DataPrism Panel</span>
+            <span class="tab-close">&times;</span>
+          </div>
+          <div class="vscode-actions">
+            <button class="action-btn" id="sim-btn-reanalyze" title="Re-analyze"><i class="fa-solid fa-rotate-right"></i></button>
+            <button class="action-btn" id="sim-btn-export" title="Export HTML Report" disabled><i class="fa-solid fa-download"></i></button>
+          </div>
+        </header>
+
+        <!-- VS Code Body -->
+        <div class="vscode-body">
+          
+          <!-- State 1: File Uploader (Drop Zone) -->
+          <div id="sim-upload-container" class="upload-zone active">
+            <div class="upload-icon">📥</div>
+            <h3>Drag & Drop Dataset File</h3>
+            <p>Upload a CSV or JSON file to analyze it instantly in your browser</p>
+            
+            <div class="upload-buttons">
+              <button class="btn-select-file" onclick="document.getElementById('sim-file-input').click()"><i class="fa-solid fa-file-import"></i> Select File</button>
+              <button class="btn-sample-data" id="btn-load-sample"><i class="fa-solid fa-circle-play"></i> Load Sample Data</button>
+            </div>
+            
+            <input type="file" id="sim-file-input" accept=".csv,.json" style="display: none;" />
+            <div class="upload-limits">Supports files up to 100MB · 100% Client-Side</div>
+          </div>
+
+          <!-- State 2: Analysis Loading State -->
+          <div id="sim-loading-container" class="loading-zone hidden">
+            <div class="spinner"></div>
+            <h3 id="loading-stage">Initializing Analysis...</h3>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="sim-progress-bar" style="width: 0%"></div>
+            </div>
+            <p id="loading-details">Reading bytes...</p>
+          </div>
+
+          <!-- State 3: Active Dashboard -->
+          <div id="sim-dashboard-container" class="dashboard-zone hidden">
+            
+            <!-- Tab Navigation Bar -->
+            <div class="dashboard-tabs">
+              <button class="tab-btn active" data-tab="preview"><i class="fa-solid fa-table"></i> Data Preview</button>
+              <button class="tab-btn" data-tab="summary"><i class="fa-solid fa-chart-simple"></i> Summary Stats</button>
+              <button class="tab-btn" data-tab="insights"><i class="fa-solid fa-lightbulb"></i> Insights</button>
+              <button class="tab-btn" data-tab="correlations"><i class="fa-solid fa-border-all"></i> Correlations</button>
+              <button class="tab-btn" data-tab="quality"><i class="fa-solid fa-shield-heart"></i> Data Quality</button>
+              <button class="tab-btn" data-tab="columns"><i class="fa-solid fa-columns"></i> Columns</button>
+            </div>
+
+            <!-- Tab Content Pane -->
+            <div class="dashboard-viewport">
+              
+              <!-- Tab 1: Preview -->
+              <div id="tab-preview" class="tab-pane active">
+                <div class="notice-bar" id="preview-notice" style="display:none;"></div>
+                <div class="table-scroll">
+                  <table id="preview-table">
+                    <thead>
+                      <!-- Dynamic -->
+                    </thead>
+                    <tbody>
+                      <!-- Dynamic -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Tab 2: Summary -->
+              <div id="tab-summary" class="tab-pane">
+                <div class="metrics-grid">
+                  <div class="metric-card">
+                    <div class="label">Total Rows</div>
+                    <div class="value" id="sum-rows">-</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="label">Total Columns</div>
+                    <div class="value" id="sum-cols">-</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="label">Missing Cells</div>
+                    <div class="value" id="sum-missing">-</div>
+                  </div>
+                  <div class="metric-card">
+                    <div class="label">Duplicate Rows</div>
+                    <div class="value" id="sum-duplicates">-</div>
+                  </div>
+                </div>
+
+                <div class="section-divider">Descriptive Column Profiles</div>
+                <div class="table-scroll">
+                  <table id="stats-table">
+                    <thead>
+                      <tr>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Nulls (%)</th>
+                        <th>Uniques</th>
+                        <th>Mean / Top</th>
+                        <th>Min / Freq</th>
+                        <th>Max / Pct</th>
+                        <th>Std Dev</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Dynamic -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Tab 3: Insights -->
+              <div id="tab-insights" class="tab-pane">
+                <div class="insights-layout">
+                  <div class="insights-left">
+                    <div class="card bg-darker">
+                      <h3><i class="fa-solid fa-file-lines text-indigo"></i> Inferred Dataset Overview</h3>
+                      <p id="insight-overview-text">Analyzing dataset structure...</p>
+                    </div>
+                    
+                    <div class="card bg-darker" style="margin-top: 1rem;">
+                      <h3><i class="fa-solid fa-flask text-teal"></i> Feature Engineering Suggestions</h3>
+                      <div id="insight-features-list" class="suggestions-list">
+                        <!-- Dynamic -->
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="insights-right">
+                    <div class="card bg-darker">
+                      <h3><i class="fa-solid fa-code text-indigo"></i> Missing Value Imputation Recipes</h3>
+                      <div id="insight-missing-recipes">
+                        <!-- Dynamic -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab 4: Correlations -->
+              <div id="tab-correlations" class="tab-pane">
+                <div class="correlation-layout">
+                  <div class="heatmap-container">
+                    <svg id="correlation-svg" width="100%" height="350"></svg>
+                  </div>
+                  <div class="correlation-details card bg-darker">
+                    <h3>Correlation Analysis</h3>
+                    <p id="correlation-explanation">This heatmap displays the Pearson correlation coefficients between numeric attributes. Hover over blocks to inspect values.</p>
+                    <div id="correlation-legend" class="legend">
+                      <div class="legend-scale">
+                        <span class="legend-label">-1.0</span>
+                        <div class="legend-bar"></div>
+                        <span class="legend-label">+1.0</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab 5: Quality -->
+              <div id="tab-quality" class="tab-pane">
+                <div class="quality-layout">
+                  <div class="quality-left">
+                    <div class="card bg-darker score-showcase">
+                      <h3>Composite Data Health Score</h3>
+                      <div class="score-dial">
+                        <div class="score-number" id="quality-score-value">100</div>
+                        <div class="score-label">Cleanliness Grade</div>
+                      </div>
+                      <p id="quality-grade-summary">Evaluating data properties...</p>
+                    </div>
+                  </div>
+                  
+                  <div class="quality-right">
+                    <div class="card bg-darker">
+                      <h3>Deduction Audit Log</h3>
+                      <ul class="penalty-list" id="quality-penalty-list">
+                        <!-- Dynamic -->
+                      </ul>
+                    </div>
+
+                    <div class="card bg-darker" style="margin-top: 1rem;">
+                      <h3>Detected Outliers (IQR Method)</h3>
+                      <div class="table-scroll">
+                        <table id="outliers-table" style="font-size: 0.8rem; width: 100%;">
+                          <thead>
+                            <tr>
+                              <th>Column</th>
+                              <th>Outlier Count</th>
+                              <th>Percentage</th>
+                              <th>Extreme Values Sample</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <!-- Dynamic -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab 6: Columns -->
+              <div id="tab-columns" class="tab-pane">
+                <div class="columns-cards-grid" id="columns-detailed-grid">
+                  <!-- Dynamic -->
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- VS Code Footer Status Bar -->
+        <footer class="vscode-footer">
+          <div class="footer-left">
+            <span class="status-item bg-indigo"><i class="fa-solid fa-code-branch"></i> main</span>
+            <span class="status-item" id="footer-status-details">DataPrism Offline Sandbox</span>
+          </div>
+          <div class="footer-right">
+            <span class="status-item" id="footer-status-score"></span>
+            <span class="status-item">UTF-8</span>
+            <span class="status-item">TypeScript</span>
+          </div>
+        </footer>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid Section -->
+  <section id="features" class="section-padding bg-darker">
+    <div class="container">
+      <div class="section-title">Engine Features & Capabilities</div>
+      <p class="section-subtitle">DataPrism incorporates a high-fidelity diagnostic engine running fully client-side to summarize, clean, and enrich datasets.</p>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="icon">📊</div>
+          <h3>Descriptive Math Engine</h3>
+          <p>Computes Fisher-Pearson skewness, standard deviation, and quartile interpolations client-side with zero latency.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🛡️</div>
+          <h3>Outlier Auditing</h3>
+          <p>Applies Tukey's fences (IQR bounds) to identify anomalies, list indexes, and score overall dataset cleanliness.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">💡</div>
+          <h3>Feature Ideas & recipes</h3>
+          <p>Flags target leakage, recommends scaling/log transforms, and writes copyable Python pandas recipes for data preparation.</p>
+        </div>
+        <div class="feature-card">
+          <div class="icon">🔗</div>
+          <h3>Correlation Matrix</h3>
+          <p>Builds full Spearman and Pearson correlation grids and renders interactive heatmap visualizations natively inside your IDE.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mathematics Engine Specifications -->
+  <section id="math" class="section-padding">
+    <div class="container">
+      <div class="section-title">Descriptive Math Engine</div>
+      <p class="section-subtitle">DataPrism conducts all numerical computations locally. Key algorithms include:</p>
+      
+      <div class="math-grid">
+        <div class="math-card">
+          <h4>Standard Deviation ($\sigma$)</h4>
+          <p class="formula">$$\sigma = \sqrt{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^2}$$</p>
+          <p>Quantifies the variance of distribution values around the arithmetic mean $\mu$.</p>
+        </div>
+        
+        <div class="math-card">
+          <h4>Fisher-Pearson Skewness ($g_1$)</h4>
+          <p class="formula">$$g_1 = \frac{\frac{1}{N} \sum_{i=1}^{N} (x_i - \mu)^3}{\sigma^3}$$</p>
+          <p>Determines asymmetry. If skewness is high, DataPrism recommends log transforms.</p>
+        </div>
+
+        <div class="math-card">
+          <h4>Outlier IQR Thresholds</h4>
+          <p class="formula">$$[Q_{25} - 1.5 \times \text{IQR},\, Q_{75} + 1.5 \times \text{IQR}]$$</p>
+          <p>Values outside these boundaries are identified as anomalies and recorded in the audit logs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Installation Section -->
+  <section id="install" class="section-padding bg-darker">
+    <div class="container">
+      <div class="section-title">Install Extension inside VS Code</div>
+      <p class="section-subtitle">DataPrism runs completely offline as a standard extension. Add it to your editor workspace now.</p>
+      
+      <div class="install-card">
+        <div class="install-header">
+          <span>VS Code Marketplace</span>
+          <i class="fa-solid fa-terminal"></i>
+        </div>
+        <div class="install-body">
+          <code>ext install CODExGAMERZ.dataprism</code>
+          <button class="btn-copy-command" onclick="navigator.clipboard.writeText('ext install CODExGAMERZ.dataprism'); alert('Command copied to clipboard!')"><i class="fa-solid fa-copy"></i> Copy</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 DataPrism. Built by <a href="https://github.com/CODExGAMERZ">CODExGAMERZ</a>. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
 </body>
 </html>
