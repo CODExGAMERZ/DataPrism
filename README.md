@@ -21,7 +21,10 @@ By eliminating the need to write custom Python parser scripts, set up environmen
 
 ## 🌐 DataPrism Online (Web Version)
 
-DataPrism is also available as a standalone web application located in the [website/](file:///C:/Users/codex/GitHub/DataPrism/website/) directory. It performs all file parsing and mathematical profiling client-side, fully offline inside your browser. No data is ever uploaded to a server!
+DataPrism is also available as a live web application deployed on Vercel:
+👉 **[Launch DataPrism Web App](https://dataprismext.vercel.app/)**
+
+You can also run it locally or deploy it yourself from the [website/](file:///C:/Users/codex/GitHub/DataPrism/website/) directory. It performs all file parsing and mathematical profiling client-side, fully offline inside your browser. No data is ever uploaded to a server!
 
 ### Running Locally
 To launch the website version on your local machine:
