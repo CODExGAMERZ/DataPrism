@@ -83,208 +83,227 @@
           </div>
         </header>
 
-        <!-- VS Code Body -->
-        <div class="vscode-body">
+        <!-- VS Code Body Wrapper (To contain Activitybar + Editor body) -->
+        <div class="vscode-body-wrapper">
           
-          <!-- State 1: File Uploader (Drop Zone) -->
-          <div id="sim-upload-container" class="upload-zone active">
-            <div class="upload-icon">📥</div>
-            <h3>Drag & Drop Dataset File</h3>
-            <p>Upload a CSV or JSON file to analyze it instantly in your browser</p>
-            
-            <div class="upload-buttons">
-              <button class="btn-select-file" onclick="document.getElementById('sim-file-input').click()"><i class="fa-solid fa-file-import"></i> Select File</button>
-              <button class="btn-sample-data" id="btn-load-sample"><i class="fa-solid fa-circle-play"></i> Load Sample Data</button>
+          <!-- VS Code Left Activity Bar -->
+          <aside class="vscode-activitybar">
+            <div class="activity-top">
+              <div class="activity-item"><i class="fa-regular fa-copy"></i></div>
+              <div class="activity-item"><i class="fa-solid fa-magnifying-glass"></i></div>
+              <div class="activity-item"><i class="fa-solid fa-code-branch"></i></div>
+              <div class="activity-item"><i class="fa-solid fa-play"></i></div>
+              <div class="activity-item active"><i class="fa-solid fa-chart-simple"></i></div>
             </div>
-            
-            <input type="file" id="sim-file-input" accept=".csv,.json" style="display: none;" />
-            <div class="upload-limits">Supports files up to 100MB · 100% Client-Side</div>
-          </div>
-
-          <!-- State 2: Analysis Loading State -->
-          <div id="sim-loading-container" class="loading-zone hidden">
-            <div class="spinner"></div>
-            <h3 id="loading-stage">Initializing Analysis...</h3>
-            <div class="progress-bar-container">
-              <div class="progress-bar-fill" id="sim-progress-bar" style="width: 0%"></div>
+            <div class="activity-bottom">
+              <div class="activity-item"><i class="fa-solid fa-gear"></i></div>
             </div>
-            <p id="loading-details">Reading bytes...</p>
-          </div>
+          </aside>
 
-          <!-- State 3: Active Dashboard -->
-          <div id="sim-dashboard-container" class="dashboard-zone hidden">
+          <!-- Main VS Code Editor Body -->
+          <div class="vscode-body">
             
-            <!-- Tab Navigation Bar -->
-            <div class="dashboard-tabs">
-              <button class="tab-btn active" data-tab="preview"><i class="fa-solid fa-table"></i> Data Preview</button>
-              <button class="tab-btn" data-tab="summary"><i class="fa-solid fa-chart-simple"></i> Summary Stats</button>
-              <button class="tab-btn" data-tab="insights"><i class="fa-solid fa-lightbulb"></i> Insights</button>
-              <button class="tab-btn" data-tab="correlations"><i class="fa-solid fa-border-all"></i> Correlations</button>
-              <button class="tab-btn" data-tab="quality"><i class="fa-solid fa-shield-heart"></i> Data Quality</button>
-              <button class="tab-btn" data-tab="columns"><i class="fa-solid fa-columns"></i> Columns</button>
-            </div>
-
-            <!-- Tab Content Pane -->
-            <div class="dashboard-viewport">
+            <!-- State 1: File Uploader (Drop Zone) -->
+            <div id="sim-upload-container" class="upload-zone active">
+              <div class="upload-icon">📥</div>
+              <h3>Drag & Drop Dataset File</h3>
+              <p>Upload a CSV or JSON file to analyze it instantly in your browser</p>
               
-              <!-- Tab 1: Preview -->
-              <div id="tab-preview" class="tab-pane active">
-                <div class="notice-bar" id="preview-notice" style="display:none;"></div>
-                <div class="table-scroll">
-                  <table id="preview-table">
-                    <thead>
-                      <!-- Dynamic -->
-                    </thead>
-                    <tbody>
-                      <!-- Dynamic -->
-                    </tbody>
-                  </table>
-                </div>
+              <div class="upload-buttons">
+                <button class="btn-select-file" onclick="document.getElementById('sim-file-input').click()"><i class="fa-solid fa-file-import"></i> Select File</button>
+                <button class="btn-sample-data" id="btn-load-sample"><i class="fa-solid fa-circle-play"></i> Load Sample Data</button>
+              </div>
+              
+              <input type="file" id="sim-file-input" accept=".csv,.json" style="display: none;" />
+              <div class="upload-limits">Supports files up to 100MB · 100% Client-Side</div>
+            </div>
+
+            <!-- State 2: Analysis Loading State -->
+            <div id="sim-loading-container" class="loading-zone hidden">
+              <div class="spinner"></div>
+              <h3 id="loading-stage">Initializing Analysis...</h3>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="sim-progress-bar" style="width: 0%"></div>
+              </div>
+              <p id="loading-details">Reading bytes...</p>
+            </div>
+
+            <!-- State 3: Active Dashboard -->
+            <div id="sim-dashboard-container" class="dashboard-zone hidden">
+              
+              <!-- Tab Navigation Bar -->
+              <div class="dashboard-tabs">
+                <button class="tab-btn active" data-tab="preview"><i class="fa-solid fa-table"></i> Data Preview</button>
+                <button class="tab-btn" data-tab="summary"><i class="fa-solid fa-chart-simple"></i> Summary Stats</button>
+                <button class="tab-btn" data-tab="insights"><i class="fa-solid fa-lightbulb"></i> Insights</button>
+                <button class="tab-btn" data-tab="correlations"><i class="fa-solid fa-border-all"></i> Correlations</button>
+                <button class="tab-btn" data-tab="quality"><i class="fa-solid fa-shield-heart"></i> Data Quality</button>
+                <button class="tab-btn" data-tab="columns"><i class="fa-solid fa-columns"></i> Columns</button>
               </div>
 
-              <!-- Tab 2: Summary -->
-              <div id="tab-summary" class="tab-pane">
-                <div class="metrics-grid">
-                  <div class="metric-card">
-                    <div class="label">Total Rows</div>
-                    <div class="value" id="sum-rows">-</div>
-                  </div>
-                  <div class="metric-card">
-                    <div class="label">Total Columns</div>
-                    <div class="value" id="sum-cols">-</div>
-                  </div>
-                  <div class="metric-card">
-                    <div class="label">Missing Cells</div>
-                    <div class="value" id="sum-missing">-</div>
-                  </div>
-                  <div class="metric-card">
-                    <div class="label">Duplicate Rows</div>
-                    <div class="value" id="sum-duplicates">-</div>
+              <!-- Tab Content Pane -->
+              <div class="dashboard-viewport">
+                
+                <!-- Tab 1: Preview -->
+                <div id="tab-preview" class="tab-pane active">
+                  <div class="notice-bar" id="preview-notice" style="display:none;"></div>
+                  <div class="table-scroll">
+                    <table id="preview-table">
+                      <thead>
+                        <!-- Dynamic -->
+                      </thead>
+                      <tbody>
+                        <!-- Dynamic -->
+                      </tbody>
+                    </table>
                   </div>
                 </div>
 
-                <div class="section-divider">Descriptive Column Profiles</div>
-                <div class="table-scroll">
-                  <table id="stats-table">
-                    <thead>
-                      <tr>
-                        <th>Column</th>
-                        <th>Type</th>
-                        <th>Nulls (%)</th>
-                        <th>Uniques</th>
-                        <th>Mean / Top</th>
-                        <th>Min / Freq</th>
-                        <th>Max / Pct</th>
-                        <th>Std Dev</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <!-- Dynamic -->
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                <!-- Tab 2: Summary -->
+                <div id="tab-summary" class="tab-pane">
+                  <div class="metrics-grid">
+                    <div class="metric-card">
+                      <div class="label">Total Rows</div>
+                      <div class="value" id="sum-rows">-</div>
+                    </div>
+                    <div class="metric-card">
+                      <div class="label">Total Columns</div>
+                      <div class="value" id="sum-cols">-</div>
+                    </div>
+                    <div class="metric-card">
+                      <div class="label">Missing Cells</div>
+                      <div class="value" id="sum-missing">-</div>
+                    </div>
+                    <div class="metric-card">
+                      <div class="label">Duplicate Rows</div>
+                      <div class="value" id="sum-duplicates">-</div>
+                    </div>
+                  </div>
 
-              <!-- Tab 3: Insights -->
-              <div id="tab-insights" class="tab-pane">
-                <div class="insights-layout">
-                  <div class="insights-left">
-                    <div class="card bg-darker">
-                      <h3><i class="fa-solid fa-file-lines text-indigo"></i> Inferred Dataset Overview</h3>
-                      <p id="insight-overview-text">Analyzing dataset structure...</p>
+                  <div class="section-divider">Descriptive Column Profiles</div>
+                  <div class="table-scroll">
+                    <table id="stats-table">
+                      <thead>
+                        <tr>
+                          <th>Column</th>
+                          <th>Type</th>
+                          <th>Nulls (%)</th>
+                          <th>Uniques</th>
+                          <th>Mean / Top</th>
+                          <th>Min / Freq</th>
+                          <th>Max / Pct</th>
+                          <th>Std Dev</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <!-- Dynamic -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Tab 3: Insights -->
+                <div id="tab-insights" class="tab-pane">
+                  <div class="insights-layout">
+                    <div class="insights-left">
+                      <div class="card bg-darker">
+                        <h3><i class="fa-solid fa-file-lines text-indigo"></i> Inferred Dataset Overview</h3>
+                        <p id="insight-overview-text">Analyzing dataset structure...</p>
+                      </div>
+                      
+                      <div class="card bg-darker" style="margin-top: 1rem;">
+                        <h3><i class="fa-solid fa-flask text-teal"></i> Feature Engineering Suggestions</h3>
+                        <div id="insight-features-list" class="suggestions-list">
+                          <!-- Dynamic -->
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="insights-right">
+                      <div class="card bg-darker">
+                        <h3><i class="fa-solid fa-code text-indigo"></i> Missing Value Imputation Recipes</h3>
+                        <div id="insight-missing-recipes">
+                          <!-- Dynamic -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tab 4: Correlations -->
+                <div id="tab-correlations" class="tab-pane">
+                  <div class="correlation-layout">
+                    <div class="heatmap-container">
+                      <svg id="correlation-svg" width="100%" height="350"></svg>
+                    </div>
+                    <div class="correlation-details card bg-darker">
+                      <h3>Correlation Analysis</h3>
+                      <p id="correlation-explanation">This heatmap displays the Pearson correlation coefficients between numeric attributes. Hover over blocks to inspect values.</p>
+                      <div id="correlation-legend" class="legend">
+                        <div class="legend-scale">
+                          <span class="legend-label">-1.0</span>
+                          <div class="legend-bar"></div>
+                          <span class="legend-label">+1.0</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tab 5: Quality -->
+                <div id="tab-quality" class="tab-pane">
+                  <div class="quality-layout">
+                    <div class="quality-left">
+                      <div class="card bg-darker score-showcase">
+                        <h3>Composite Data Health Score</h3>
+                        <div class="score-dial">
+                          <div class="score-number" id="quality-score-value">100</div>
+                          <div class="score-label">Cleanliness Grade</div>
+                        </div>
+                        <p id="quality-grade-summary">Evaluating data properties...</p>
+                      </div>
                     </div>
                     
-                    <div class="card bg-darker" style="margin-top: 1rem;">
-                      <h3><i class="fa-solid fa-flask text-teal"></i> Feature Engineering Suggestions</h3>
-                      <div id="insight-features-list" class="suggestions-list">
-                        <!-- Dynamic -->
+                    <div class="quality-right">
+                      <div class="card bg-darker">
+                        <h3>Deduction Audit Log</h3>
+                        <ul class="penalty-list" id="quality-penalty-list">
+                          <!-- Dynamic -->
+                        </ul>
                       </div>
-                    </div>
-                  </div>
 
-                  <div class="insights-right">
-                    <div class="card bg-darker">
-                      <h3><i class="fa-solid fa-code text-indigo"></i> Missing Value Imputation Recipes</h3>
-                      <div id="insight-missing-recipes">
-                        <!-- Dynamic -->
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tab 4: Correlations -->
-              <div id="tab-correlations" class="tab-pane">
-                <div class="correlation-layout">
-                  <div class="heatmap-container">
-                    <svg id="correlation-svg" width="100%" height="350"></svg>
-                  </div>
-                  <div class="correlation-details card bg-darker">
-                    <h3>Correlation Analysis</h3>
-                    <p id="correlation-explanation">This heatmap displays the Pearson correlation coefficients between numeric attributes. Hover over blocks to inspect values.</p>
-                    <div id="correlation-legend" class="legend">
-                      <div class="legend-scale">
-                        <span class="legend-label">-1.0</span>
-                        <div class="legend-bar"></div>
-                        <span class="legend-label">+1.0</span>
+                      <div class="card bg-darker" style="margin-top: 1rem;">
+                        <h3>Detected Outliers (IQR Method)</h3>
+                        <div class="table-scroll">
+                          <table id="outliers-table" style="font-size: 0.8rem; width: 100%;">
+                            <thead>
+                              <tr>
+                                <th>Column</th>
+                                <th>Outlier Count</th>
+                                <th>Percentage</th>
+                                <th>Extreme Values Sample</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <!-- Dynamic -->
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Tab 5: Quality -->
-              <div id="tab-quality" class="tab-pane">
-                <div class="quality-layout">
-                  <div class="quality-left">
-                    <div class="card bg-darker score-showcase">
-                      <h3>Composite Data Health Score</h3>
-                      <div class="score-dial">
-                        <div class="score-number" id="quality-score-value">100</div>
-                        <div class="score-label">Cleanliness Grade</div>
-                      </div>
-                      <p id="quality-grade-summary">Evaluating data properties...</p>
-                    </div>
-                  </div>
-                  
-                  <div class="quality-right">
-                    <div class="card bg-darker">
-                      <h3>Deduction Audit Log</h3>
-                      <ul class="penalty-list" id="quality-penalty-list">
-                        <!-- Dynamic -->
-                      </ul>
-                    </div>
-
-                    <div class="card bg-darker" style="margin-top: 1rem;">
-                      <h3>Detected Outliers (IQR Method)</h3>
-                      <div class="table-scroll">
-                        <table id="outliers-table" style="font-size: 0.8rem; width: 100%;">
-                          <thead>
-                            <tr>
-                              <th>Column</th>
-                              <th>Outlier Count</th>
-                              <th>Percentage</th>
-                              <th>Extreme Values Sample</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <!-- Dynamic -->
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
+                <!-- Tab 6: Columns -->
+                <div id="tab-columns" class="tab-pane">
+                  <div class="columns-cards-grid" id="columns-detailed-grid">
+                    <!-- Dynamic -->
                   </div>
                 </div>
-              </div>
 
-              <!-- Tab 6: Columns -->
-              <div id="tab-columns" class="tab-pane">
-                <div class="columns-cards-grid" id="columns-detailed-grid">
-                  <!-- Dynamic -->
-                </div>
               </div>
-
             </div>
+
           </div>
 
         </div>
@@ -325,7 +344,7 @@
         </div>
         <div class="feature-card">
           <div class="icon">💡</div>
-          <h3>Feature Ideas & recipes</h3>
+          <h3>Feature Ideas & Recipes</h3>
           <p>Flags target leakage, recommends scaling/log transforms, and writes copyable Python pandas recipes for data preparation.</p>
         </div>
         <div class="feature-card">
