@@ -626,13 +626,19 @@ body {
   height: 18.75px; /* aligned with standard line height */
 }
 
-.code-pre {
+.code-textarea {
   flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
   padding: 12px 14px;
-  margin: 0;
   color: #93c5fd; /* Soft blue code styling */
-  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
   white-space: pre;
+  overflow: auto;
   tab-size: 4;
 }
 

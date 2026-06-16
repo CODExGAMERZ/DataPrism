@@ -30,7 +30,7 @@
   const editorTabTitle = document.getElementById('editor-tab-title');
   const editorFileSize = document.getElementById('editor-file-size');
   const editorLineNumbers = document.getElementById('editor-line-numbers');
-  const editorCodePre = document.getElementById('editor-code-pre');
+  const editorCodeTextarea = document.getElementById('editor-code-textarea');
   const consoleLogPre = document.getElementById('console-log-pre');
   const consolePanel = document.querySelector('.console-panel');
   const btnToggleConsole = document.getElementById('btn-toggle-console');
@@ -235,6 +235,32 @@ Julia Roberts,31,95000,Operations,,true`
     exportHtmlReport();
   });
 
+  // Textarea input change listener (debounced compiler/profiler)
+  let analysisTimeout = null;
+  editorCodeTextarea.addEventListener('input', () => {
+    const content = editorCodeTextarea.value;
+    currentFile.content = content;
+    
+    // Update size
+    const size = new Blob([content]).size;
+    currentFile.size = size;
+    const kb = (size / 1024).toFixed(2);
+    editorFileSize.textContent = `~${kb} KB`;
+
+    // Update Line Numbers
+    const lines = content.split('\n');
+    let numbersHtml = '';
+    for (let i = 1; i <= lines.length; i++) {
+      numbersHtml += `<div>${i}</div>`;
+    }
+    editorLineNumbers.innerHTML = numbersHtml;
+
+    clearTimeout(analysisTimeout);
+    analysisTimeout = setTimeout(() => {
+      runAnalysis();
+    }, 500); // 500ms debounce
+  });
+
   // Set file details in mock code editor
   function selectFile(name, size, content) {
     currentFile.name = name;
@@ -250,7 +276,7 @@ Julia Roberts,31,95000,Operations,,true`
     editorFileSize.textContent = `~${kb} KB`;
 
     // Render raw code in Monaco mockup
-    editorCodePre.textContent = content;
+    editorCodeTextarea.value = content;
 
     // Update Line Numbers
     const lines = content.split('\n');
