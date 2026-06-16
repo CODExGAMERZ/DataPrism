@@ -55,6 +55,25 @@ Julia Roberts,31,95000,Operations,,true`;
     }
   });
 
+  // Mobile Hamburger Menu Toggle
+  const navHamburger = document.getElementById('navHamburger');
+  const navLinks = document.getElementById('navLinks');
+
+  if (navHamburger && navLinks) {
+    navHamburger.addEventListener('click', () => {
+      navHamburger.classList.toggle('active');
+      navLinks.classList.toggle('open');
+    });
+
+    // Close menu when clicking a link
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navHamburger.classList.remove('active');
+        navLinks.classList.remove('open');
+      });
+    });
+  }
+
   // Tab Switching
   tabButtons.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -1071,13 +1090,22 @@ Julia Roberts,31,95000,Operations,,true`;
 
   function populateQualityTab(quality, outliers) {
     const scoreVal = document.getElementById('quality-score-value');
-    scoreVal.textContent = quality.score;
+    if (scoreVal) {
+      scoreVal.textContent = quality.score;
+    }
     
-    // Color score dial boundary
-    const dial = scoreVal.parentElement;
-    if (quality.score > 80) dial.style.borderColor = 'var(--success)';
-    else if (quality.score > 50) dial.style.borderColor = 'var(--warning)';
-    else dial.style.borderColor = 'var(--danger)';
+    // Animate circular SVG progress ring
+    const progressCircle = document.getElementById('dial-progress-circle');
+    if (progressCircle) {
+      const circumference = 2 * Math.PI * 58; // 364.42
+      const offset = circumference * (1 - quality.score / 100);
+      progressCircle.style.strokeDashoffset = offset;
+      
+      // Update color based on score
+      if (quality.score > 80) progressCircle.style.stroke = 'var(--success)';
+      else if (quality.score > 50) progressCircle.style.stroke = 'var(--warning)';
+      else progressCircle.style.stroke = 'var(--danger)';
+    }
 
     document.getElementById('quality-grade-summary').textContent = quality.summary;
 

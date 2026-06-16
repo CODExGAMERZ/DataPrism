@@ -46,15 +46,20 @@
         <img src="logo.png" alt="DataPrism Logo" class="logo-img">
         DataPrism
       </a>
-      <div class="nav-links">
+      <div class="nav-links" id="navLinks">
         <a href="#simulator" class="active">Live Simulator</a>
         <a href="#features">Features</a>
         <a href="#math">Math Engine</a>
         <a href="#install">Install</a>
       </div>
-      <div class="nav-actions">
+      <div class="nav-actions" id="navActions">
         <a href="#install" class="btn-nav-download">Get Extension</a>
       </div>
+      <button class="nav-hamburger" id="navHamburger" aria-label="Toggle navigation menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
   </nav>
 
@@ -276,8 +281,14 @@
                       <div class="card bg-darker score-showcase">
                         <h3>Composite Data Health Score</h3>
                         <div class="score-dial">
-                          <div class="score-number" id="quality-score-value">100</div>
-                          <div class="score-label">Cleanliness Grade</div>
+                          <svg width="140" height="140" viewBox="0 0 140 140">
+                            <circle cx="70" cy="70" r="58" class="dial-bg" stroke="rgba(255,255,255,0.03)" stroke-width="8" fill="none" />
+                            <circle cx="70" cy="70" r="58" class="dial-progress" id="dial-progress-circle" stroke="var(--accent-primary)" stroke-width="8" stroke-dasharray="364.42" stroke-dashoffset="364.42" fill="none" stroke-linecap="round" transform="rotate(-90 70 70)" />
+                          </svg>
+                          <div class="score-overlay">
+                            <div class="score-number" id="quality-score-value">100</div>
+                            <div class="score-label">Cleanliness Grade</div>
+                          </div>
                         </div>
                         <p id="quality-grade-summary">Evaluating data properties...</p>
                       </div>
