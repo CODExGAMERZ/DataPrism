@@ -1010,3 +1010,110 @@ td.null-cell {
   50% { transform: translateY(-12px); }
   100% { transform: translateY(0px); }
 }
+
+/* --- RESPONSIVENESS (Media Queries) --- */
+
+@media (max-width: 1024px) {
+  .hero h1 {
+    font-size: 3rem;
+  }
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .math-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .vscode-frame {
+    height: 580px;
+  }
+  .insights-layout, .correlation-layout, .quality-layout {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .columns-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-container {
+    padding: 0 1rem;
+  }
+  .nav-links {
+    display: none; /* Hidden on mobile to save vertical header space */
+  }
+  .hero {
+    padding-top: 130px;
+    padding-bottom: 60px;
+  }
+  .hero h1 {
+    font-size: 2.3rem;
+  }
+  .hero p {
+    font-size: 1rem;
+    padding: 0 10px;
+  }
+  .hero-ctas {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    max-width: 320px;
+    justify-content: center;
+  }
+  .vscode-frame {
+    height: 520px;
+  }
+  .vscode-activitybar {
+    display: none; /* Hide activity bar on mobile to maximize space */
+  }
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+  .math-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  .vscode-header {
+    padding: 0 10px;
+  }
+  .tab-btn {
+    padding: 0 10px;
+    font-size: 0.7rem;
+  }
+  .score-dial {
+    width: 110px;
+    height: 110px;
+  }
+  .score-number {
+    font-size: 2.2rem;
+  }
+  .install-body {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  .install-body code {
+    font-size: 0.85rem;
+  }
+  .btn-copy-command {
+    width: 100%;
+    justify-content: center;
+  }
+}
