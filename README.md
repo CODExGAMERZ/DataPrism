@@ -19,6 +19,33 @@ By eliminating the need to write custom Python parser scripts, set up environmen
 
 ---
 
+## 🌐 DataPrism Online (Web Version)
+
+DataPrism is also available as a standalone web application located in the [website/](file:///C:/Users/codex/GitHub/DataPrism/website/) directory. It performs all file parsing and mathematical profiling client-side, fully offline inside your browser. No data is ever uploaded to a server!
+
+### Running Locally
+To launch the website version on your local machine:
+1. Navigate to the website directory:
+   ```bash
+   cd website
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the Vite development server:
+   ```bash
+   npm run dev
+   ```
+4. Open [http://localhost:5173](http://localhost:5173) in your web browser.
+
+### Deploying to Vercel
+This repository is configured with a root-level `vercel.json` for instant deployment:
+1. Import this repository into Vercel.
+2. Vercel will auto-detect the configuration, build the frontend from `website/`, and host it.
+
+---
+
 ## 🌟 Interactive UI Panels
 
 The extension loads a tabbed panel interface built using VS Code theme-compliant styles:
